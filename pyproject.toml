@@ -120,6 +120,11 @@ dependencies = [
     "azure-storage-blob==12.28.0",
 
     "ldap3==2.9.1",
+
+    # TNM OpenFlow — Teams connector + Metabase tool
+    "botbuilder-core==4.15.0",
+    "botbuilder-integration-aiohttp==4.15.0",
+    "sqlglot==23.12.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.11, < 3.13.0a1"
@@ -217,6 +222,7 @@ ignore-words-list = 'ans'
 dev = [
     "pytest-asyncio>=1.0.0",
     "ruff>=0.15.5",
+    "respx==0.21.1",
 ]
 
 [tool.black]
