@@ -1,6 +1,20 @@
 x.py
 yarn.lock
 .DS_Store
+
+# TNM OpenFlow — runtime data (user data, vector DB, uploads, cache)
+backend/data/*.db
+backend/data/cache/
+backend/data/uploads/
+backend/data/vector_db/
+backend/data/docs/
+
+# Personal workspace config
+.obsidian/
+
+# Internal planning docs — keep out of any future public fork
+Plans/
+Specs/
 node_modules
 /build
 /.svelte-kit
