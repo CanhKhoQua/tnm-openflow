@@ -21,6 +21,7 @@
 	import Evaluations from './Settings/Evaluations.svelte';
 	import CodeExecution from './Settings/CodeExecution.svelte';
 	import Integrations from './Settings/Integrations.svelte';
+	import BotIntegrations from './BotIntegrations.svelte';
 
 	import ChartBar from '../icons/ChartBar.svelte';
 	import DocumentChartBar from '../icons/DocumentChartBar.svelte';
@@ -48,7 +49,8 @@
 			'audio',
 			'images',
 			'pipelines',
-			'db'
+			'db',
+			'bot-integrations'
 		].includes(tabFromPath)
 			? tabFromPath
 			: 'general';
@@ -243,6 +245,12 @@
 			title: 'Database',
 			route: '/admin/settings/db',
 			keywords: ['database', 'export', 'import', 'backup', 'chats', 'users']
+		},
+		{
+			id: 'bot-integrations',
+			title: 'Bot Integrations',
+			route: '/admin/settings/bot-integrations',
+			keywords: ['teams', 'bot', 'connector', 'webhook', 'slack', 'metabase', 'openflow']
 		}
 	];
 
@@ -584,6 +592,8 @@
 					toast.success($i18n.t('Settings saved successfully!'));
 				}}
 			/>
+		{:else if selectedTab === 'bot-integrations'}
+			<BotIntegrations />
 		{/if}
 	</div>
 </div>
