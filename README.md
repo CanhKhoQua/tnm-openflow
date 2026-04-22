@@ -57,7 +57,7 @@ Ollama (LLM)       Metabase (database proxy)
 ### 1. Clone
 
 ```bash
-git clone https://github.com/your-org/tnm-openflow.git
+git clone https://github.com/CanhKhoQua/tnm-openflow.git
 cd tnm-openflow
 ```
 
