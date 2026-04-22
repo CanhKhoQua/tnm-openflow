@@ -10,8 +10,8 @@ class BasePlatformConnector(ABC):
         """Send a text message to the given conversation."""
 
     @abstractmethod
-    async def handle_incoming(self, payload: dict[str, Any]) -> Any:
-        """Process an incoming webhook payload and return a response."""
+    async def handle_incoming(self, body: bytes, auth_header: str) -> Any:
+        """Process a raw incoming webhook body and auth header."""
 
     @property
     @abstractmethod

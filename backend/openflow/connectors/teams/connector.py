@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from botbuilder.core import BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext
@@ -18,9 +19,8 @@ class TeamsConnector(BasePlatformConnector):
     def platform_name(self) -> str:
         return 'teams'
 
-    async def handle_incoming(self, payload: dict[str, Any]) -> Any:
-        activity = Activity().deserialize(payload)
-        auth_header = payload.get('_auth_header', '')
+    async def handle_incoming(self, body: bytes, auth_header: str) -> Any:
+        activity = Activity().deserialize(json.loads(body))
 
         async def _turn(turn_context: TurnContext) -> None:
             await self._pipeline.process(turn_context)

@@ -1,7 +1,10 @@
+import logging
+
 from fastapi import APIRouter, Request, Response
 
 from openflow.connectors import registry
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -11,8 +14,13 @@ async def teams_webhook(request: Request) -> Response:
     if connector is None:
         return Response(content='Teams connector not registered', status_code=503)
 
-    payload = await request.json()
-    payload['_auth_header'] = request.headers.get('Authorization', '')
+    body = await request.body()
+    auth_header = request.headers.get('Authorization', '')
 
-    await connector.handle_incoming(payload)
+    try:
+        await connector.handle_incoming(body, auth_header)
+    except Exception:
+        logger.exception('teams_webhook: handle_incoming failed')
+        return Response(status_code=500)
+
     return Response(status_code=200)
