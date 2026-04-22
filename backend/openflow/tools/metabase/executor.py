@@ -25,7 +25,7 @@ async def _nl_to_sql(question: str, schema: str) -> str:
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             f'{LLM_BASE_URL}/chat/completions',
-            headers={'Authorization': f'Bearer {LLM_API_KEY}'} if LLM_API_KEY else {},
+            headers={'Authorization': f'Bearer {LLM_API_KEY.value}'} if LLM_API_KEY.value else {},
             json={
                 'model': LLM_MODEL,
                 'messages': [
@@ -66,7 +66,7 @@ async def run_query(question: str) -> dict:
 
         result = await metabase_post(
             '/api/dataset',
-            {'database': METABASE_DATABASE_ID, 'type': 'native', 'native': {'query': sql}},
+            {'database': METABASE_DATABASE_ID.value, 'type': 'native', 'native': {'query': sql}},
         )
 
         data = result.get('data', {})

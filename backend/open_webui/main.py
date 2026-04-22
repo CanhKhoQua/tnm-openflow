@@ -1440,15 +1440,17 @@ app.include_router(terminals.router, prefix='/api/v1/terminals', tags=['terminal
 app.include_router(automations.router, prefix='/api/v1/automations', tags=['automations'])
 app.include_router(calendar.router, prefix='/api/v1/calendars', tags=['calendars'])
 
-# TNM OpenFlow — platform connectors + status
+# TNM OpenFlow — platform connectors + status + settings
 from openflow.connectors.teams.router import router as teams_router
 from openflow.connectors.teams.connector import TeamsConnector
 from openflow.connectors import registry as connector_registry
 from openflow.routers.status import router as openflow_status_router
+from openflow.routers.settings import router as openflow_settings_router
 
 connector_registry.register(TeamsConnector())
 app.include_router(teams_router, prefix='/openflow', tags=['openflow'])
 app.include_router(openflow_status_router, prefix='/openflow', tags=['openflow'])
+app.include_router(openflow_settings_router, prefix='/openflow', tags=['openflow'])
 
 # SCIM 2.0 API for identity management
 if ENABLE_SCIM:

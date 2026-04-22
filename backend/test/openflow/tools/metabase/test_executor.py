@@ -32,9 +32,9 @@ from openflow import config as openflow_config
 # URL constants derived from config defaults
 # ---------------------------------------------------------------------------
 
-_LLM_CHAT_URL = openflow_config.LLM_BASE_URL + "/chat/completions"
-_METABASE_SESSION_URL = openflow_config.METABASE_URL + "/api/session"
-_METABASE_DATASET_URL = openflow_config.METABASE_URL + "/api/dataset"
+_LLM_CHAT_URL = openflow_config.LLM_BASE_URL.value + "/chat/completions"
+_METABASE_SESSION_URL = openflow_config.METABASE_URL.value + "/api/session"
+_METABASE_DATASET_URL = openflow_config.METABASE_URL.value + "/api/dataset"
 
 _FAKE_SCHEMA = "Table: users\n  - id\n  - name"
 

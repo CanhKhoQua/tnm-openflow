@@ -21,7 +21,7 @@ async def get_schema() -> str:
     global _cache, _cache_time
     async with _get_cache_lock():
         now = datetime.datetime.now(datetime.timezone.utc)
-        if _cache_time and (now - _cache_time).total_seconds() < SCHEMA_CACHE_MINUTES * 60:
+        if _cache_time and (now - _cache_time).total_seconds() < SCHEMA_CACHE_MINUTES.value * 60:
             return _cache['schema']
 
         fields_data = await metabase_get(f'/api/database/{METABASE_DATABASE_ID}/fields')

@@ -24,7 +24,7 @@ async def _get_token() -> str:
         async with httpx.AsyncClient() as client:
             resp = await client.post(
                 f'{METABASE_URL}/api/session',
-                json={'username': METABASE_USERNAME, 'password': METABASE_PASSWORD},
+                json={'username': METABASE_USERNAME.value, 'password': METABASE_PASSWORD.value},
                 timeout=10,
             )
             resp.raise_for_status()
