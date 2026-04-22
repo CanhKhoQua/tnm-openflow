@@ -9,6 +9,7 @@ Tested functions:
 Each test uses pytest's monkeypatch fixture to reset the module-level
 _registry dict so tests are fully isolated from one another.
 """
+
 from typing import Any
 
 import pytest
@@ -48,7 +49,7 @@ class _FakeConnector(BasePlatformConnector):
 @pytest.fixture(autouse=True)
 def _clean_registry(monkeypatch: pytest.MonkeyPatch) -> None:
     """Replace the module-level _registry with a fresh empty dict for every test."""
-    monkeypatch.setattr(registry_module, "_registry", {})
+    monkeypatch.setattr(registry_module, '_registry', {})
 
 
 # ---------------------------------------------------------------------------
@@ -58,11 +59,11 @@ def _clean_registry(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_register_and_get_by_name():
     # Arrange
-    connector = _FakeConnector("teams")
+    connector = _FakeConnector('teams')
 
     # Act
     register(connector)
-    result = get("teams")
+    result = get('teams')
 
     # Assert
     assert result is connector
@@ -70,11 +71,11 @@ def test_register_and_get_by_name():
 
 def test_get_returns_the_exact_instance_registered():
     # Arrange
-    connector = _FakeConnector("slack")
+    connector = _FakeConnector('slack')
     register(connector)
 
     # Act
-    result = get("slack")
+    result = get('slack')
 
     # Assert
     assert result is connector
@@ -82,15 +83,15 @@ def test_get_returns_the_exact_instance_registered():
 
 def test_registering_twice_overwrites_with_latest():
     # Arrange
-    first = _FakeConnector("teams")
-    second = _FakeConnector("teams")
+    first = _FakeConnector('teams')
+    second = _FakeConnector('teams')
 
     # Act
     register(first)
     register(second)
 
     # Assert
-    assert get("teams") is second
+    assert get('teams') is second
 
 
 # ---------------------------------------------------------------------------
@@ -100,7 +101,7 @@ def test_registering_twice_overwrites_with_latest():
 
 def test_get_unknown_name_returns_none():
     # Act
-    result = get("nonexistent")
+    result = get('nonexistent')
 
     # Assert
     assert result is None
@@ -108,7 +109,7 @@ def test_get_unknown_name_returns_none():
 
 def test_get_on_empty_registry_returns_none():
     # Act (registry is empty due to fixture)
-    result = get("teams")
+    result = get('teams')
 
     # Assert
     assert result is None
@@ -137,7 +138,7 @@ def test_all_connectors_empty_when_nothing_registered():
 
 def test_all_connectors_contains_registered_connector():
     # Arrange
-    connector = _FakeConnector("teams")
+    connector = _FakeConnector('teams')
     register(connector)
 
     # Act
@@ -149,8 +150,8 @@ def test_all_connectors_contains_registered_connector():
 
 def test_all_connectors_contains_all_registered_connectors():
     # Arrange
-    teams = _FakeConnector("teams")
-    slack = _FakeConnector("slack")
+    teams = _FakeConnector('teams')
+    slack = _FakeConnector('slack')
     register(teams)
     register(slack)
 
@@ -166,7 +167,7 @@ def test_all_connectors_contains_all_registered_connectors():
 def test_all_connectors_returns_new_list_not_internal_dict_values():
     """Mutating the returned list must not affect the registry."""
     # Arrange
-    connector = _FakeConnector("teams")
+    connector = _FakeConnector('teams')
     register(connector)
 
     # Act
@@ -174,4 +175,4 @@ def test_all_connectors_returns_new_list_not_internal_dict_values():
     result.clear()
 
     # Assert — registry still intact
-    assert get("teams") is connector
+    assert get('teams') is connector

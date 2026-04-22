@@ -93,7 +93,6 @@
 </script>
 
 <div class="flex flex-col gap-8 p-4 max-w-2xl">
-
 	<!-- Header -->
 	<div>
 		<h2 class="text-lg font-semibold">{$i18n.t('Bot Integrations')}</h2>
@@ -105,7 +104,6 @@
 	{#if loading}
 		<div class="text-sm text-gray-400">{$i18n.t('Loading...')}</div>
 	{:else}
-
 		<!-- Connector status -->
 		<section class="flex flex-col gap-3">
 			<h3 class="text-sm font-semibold">{$i18n.t('Connector Status')}</h3>
@@ -113,9 +111,15 @@
 				<div class="text-sm text-gray-400">{$i18n.t('No connectors registered.')}</div>
 			{:else}
 				{#each connectors as connector}
-					<div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3">
+					<div
+						class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-3"
+					>
 						<div class="flex items-center gap-3">
-							<span class="h-2.5 w-2.5 rounded-full {connector.registered ? 'bg-green-500' : 'bg-gray-400'}" />
+							<span
+								class="h-2.5 w-2.5 rounded-full {connector.registered
+									? 'bg-green-500'
+									: 'bg-gray-400'}"
+							/>
 							<span class="font-medium capitalize">{connector.name}</span>
 						</div>
 						<span class="text-xs text-gray-500">
@@ -139,7 +143,10 @@
 				<button
 					type="button"
 					class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition"
-					on:click={() => { navigator.clipboard.writeText(webhookUrl); toast.success($i18n.t('Copied')); }}
+					on:click={() => {
+						navigator.clipboard.writeText(webhookUrl);
+						toast.success($i18n.t('Copied'));
+					}}
 				>
 					{$i18n.t('Copy')}
 				</button>
@@ -151,16 +158,18 @@
 
 		<!-- Settings form -->
 		<form on:submit|preventDefault={save} class="flex flex-col gap-6">
-
 			<!-- Teams -->
 			<section class="flex flex-col gap-3">
 				<h3 class="text-sm font-semibold">{$i18n.t('Microsoft Teams')}</h3>
 				<div class="flex flex-col gap-3">
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">{$i18n.t('App ID')}</span>
-						<input type="text" bind:value={teamsAppId}
+						<input
+							type="text"
+							bind:value={teamsAppId}
 							placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">
@@ -169,18 +178,26 @@
 								<span class="ml-1 text-green-500">&#10003; {$i18n.t('set')}</span>
 							{/if}
 						</span>
-						<input type="password" bind:value={teamsAppSecret}
-							placeholder={settings?.teams_app_secret_set ? $i18n.t('Leave blank to keep current') : ''}
-							class="input-field" />
+						<input
+							type="password"
+							bind:value={teamsAppSecret}
+							placeholder={settings?.teams_app_secret_set
+								? $i18n.t('Leave blank to keep current')
+								: ''}
+							class="input-field"
+						/>
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">
 							{$i18n.t('Tenant ID')}
 							<span class="text-gray-400 ml-1">({$i18n.t('optional')})</span>
 						</span>
-						<input type="text" bind:value={teamsTenantId}
+						<input
+							type="text"
+							bind:value={teamsTenantId}
 							placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 				</div>
 			</section>
@@ -191,15 +208,21 @@
 				<div class="flex flex-col gap-3">
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">{$i18n.t('URL')}</span>
-						<input type="text" bind:value={metabaseUrl}
+						<input
+							type="text"
+							bind:value={metabaseUrl}
 							placeholder="http://metabase:3000"
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">{$i18n.t('Username')}</span>
-						<input type="text" bind:value={metabaseUsername}
+						<input
+							type="text"
+							bind:value={metabaseUsername}
 							placeholder="admin@example.com"
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">
@@ -208,9 +231,14 @@
 								<span class="ml-1 text-green-500">&#10003; {$i18n.t('set')}</span>
 							{/if}
 						</span>
-						<input type="password" bind:value={metabasePassword}
-							placeholder={settings?.metabase_password_set ? $i18n.t('Leave blank to keep current') : ''}
-							class="input-field" />
+						<input
+							type="password"
+							bind:value={metabasePassword}
+							placeholder={settings?.metabase_password_set
+								? $i18n.t('Leave blank to keep current')
+								: ''}
+							class="input-field"
+						/>
 					</label>
 					<div class="grid grid-cols-2 gap-3">
 						<label class="flex flex-col gap-1">
@@ -231,15 +259,16 @@
 				<div class="flex flex-col gap-3">
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">{$i18n.t('Base URL')}</span>
-						<input type="text" bind:value={llmBaseUrl}
+						<input
+							type="text"
+							bind:value={llmBaseUrl}
 							placeholder="http://ollama:11434/v1"
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">{$i18n.t('Model')}</span>
-						<input type="text" bind:value={llmModel}
-							placeholder="llama3.2"
-							class="input-field" />
+						<input type="text" bind:value={llmModel} placeholder="llama3.2" class="input-field" />
 					</label>
 					<label class="flex flex-col gap-1">
 						<span class="text-xs text-gray-500">
@@ -247,11 +276,16 @@
 							{#if settings?.llm_api_key_set}
 								<span class="ml-1 text-green-500">&#10003; {$i18n.t('set')}</span>
 							{/if}
-							<span class="text-gray-400 ml-1">({$i18n.t('optional — leave blank for local Ollama')})</span>
+							<span class="text-gray-400 ml-1"
+								>({$i18n.t('optional — leave blank for local Ollama')})</span
+							>
 						</span>
-						<input type="password" bind:value={llmApiKey}
+						<input
+							type="password"
+							bind:value={llmApiKey}
 							placeholder={settings?.llm_api_key_set ? $i18n.t('Leave blank to keep current') : ''}
-							class="input-field" />
+							class="input-field"
+						/>
 					</label>
 				</div>
 			</section>
@@ -265,7 +299,6 @@
 					{saving ? $i18n.t('Saving…') : $i18n.t('Save')}
 				</button>
 			</div>
-
 		</form>
 	{/if}
 </div>

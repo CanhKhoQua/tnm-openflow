@@ -18,6 +18,7 @@ Synthetic values used throughout:
   ids            : 1, 2, 99999
   token          : "fake-token"
 """
+
 import pytest
 import respx
 import httpx
@@ -32,11 +33,11 @@ from openflow import config as openflow_config
 # URL constants derived from config defaults
 # ---------------------------------------------------------------------------
 
-_LLM_CHAT_URL = openflow_config.LLM_BASE_URL.value + "/chat/completions"
-_METABASE_SESSION_URL = openflow_config.METABASE_URL.value + "/api/session"
-_METABASE_DATASET_URL = openflow_config.METABASE_URL.value + "/api/dataset"
+_LLM_CHAT_URL = openflow_config.LLM_BASE_URL.value + '/chat/completions'
+_METABASE_SESSION_URL = openflow_config.METABASE_URL.value + '/api/session'
+_METABASE_DATASET_URL = openflow_config.METABASE_URL.value + '/api/dataset'
 
-_FAKE_SCHEMA = "Table: users\n  - id\n  - name"
+_FAKE_SCHEMA = 'Table: users\n  - id\n  - name'
 
 
 # ---------------------------------------------------------------------------
@@ -47,9 +48,9 @@ _FAKE_SCHEMA = "Table: users\n  - id\n  - name"
 def _metabase_dataset_response(cols: list[str], rows: list[list]) -> dict:
     """Build a minimal Metabase /api/dataset response body."""
     return {
-        "data": {
-            "cols": [{"name": c} for c in cols],
-            "rows": rows,
+        'data': {
+            'cols': [{'name': c} for c in cols],
+            'rows': rows,
         }
     }
 
@@ -62,16 +63,17 @@ def _metabase_dataset_response(cols: list[str], rows: list[list]) -> dict:
 @pytest.fixture(autouse=True)
 def _patch_get_schema(monkeypatch: pytest.MonkeyPatch):
     """Prevent real HTTP calls to Metabase for schema fetching."""
+
     async def _fake_get_schema() -> str:
         return _FAKE_SCHEMA
 
-    monkeypatch.setattr(executor_module, "get_schema", _fake_get_schema)
+    monkeypatch.setattr(executor_module, 'get_schema', _fake_get_schema)
 
 
 @pytest.fixture(autouse=True)
 def _reset_metabase_token(monkeypatch: pytest.MonkeyPatch):
     """Reset the cached Metabase session token before every test."""
-    monkeypatch.setattr(metabase_client_module, "_token", None)
+    monkeypatch.setattr(metabase_client_module, '_token', None)
 
 
 # ---------------------------------------------------------------------------
@@ -82,40 +84,40 @@ def _reset_metabase_token(monkeypatch: pytest.MonkeyPatch):
 @pytest.mark.asyncio
 async def test_question_with_disallowed_characters_returns_error():
     # Arrange — '<' is not in [\w\s\.,\?\!\-\(\)\'\"]+
-    question = "SELECT * FROM users WHERE name = <script>"
+    question = 'SELECT * FROM users WHERE name = <script>'
 
     # Act
     result = await run_query(question)
 
     # Assert
-    assert "error" in result
-    assert result["error"] == "Question contains disallowed characters"
+    assert 'error' in result
+    assert result['error'] == 'Question contains disallowed characters'
 
 
 @pytest.mark.asyncio
 async def test_question_with_semicolon_returns_error():
     # Arrange — ';' is not in the safe character set
-    question = "show me users; DROP TABLE users"
+    question = 'show me users; DROP TABLE users'
 
     # Act
     result = await run_query(question)
 
     # Assert
-    assert "error" in result
-    assert result["error"] == "Question contains disallowed characters"
+    assert 'error' in result
+    assert result['error'] == 'Question contains disallowed characters'
 
 
 @pytest.mark.asyncio
 async def test_question_with_backtick_returns_error():
     # Arrange — '`' is not in the safe character set
-    question = "show `users`"
+    question = 'show `users`'
 
     # Act
     result = await run_query(question)
 
     # Assert
-    assert "error" in result
-    assert result["error"] == "Question contains disallowed characters"
+    assert 'error' in result
+    assert result['error'] == 'Question contains disallowed characters'
 
 
 # ---------------------------------------------------------------------------
@@ -133,24 +135,22 @@ async def test_question_too_long_is_truncated_not_errored(
     We patch _nl_to_sql to capture what cleaned question was forwarded.
     """
     # Arrange — repeat a safe phrase to exceed 500 chars; all chars are in safe set
-    long_question = "how many users are there " * 24  # ~600 chars, entirely safe
+    long_question = 'how many users are there ' * 24  # ~600 chars, entirely safe
 
     captured: list[str] = []
 
     async def _capture_nl_to_sql(question: str, schema: str) -> str:
         captured.append(question)
-        return "SELECT COUNT(*) FROM users"
+        return 'SELECT COUNT(*) FROM users'
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _capture_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _capture_nl_to_sql)
 
     with respx.mock(assert_all_called=False) as mock:
-        mock.post(_METABASE_SESSION_URL).mock(
-            return_value=httpx.Response(200, json={"id": "fake-token"})
-        )
+        mock.post(_METABASE_SESSION_URL).mock(return_value=httpx.Response(200, json={'id': 'fake-token'}))
         mock.post(_METABASE_DATASET_URL).mock(
             return_value=httpx.Response(
                 200,
-                json=_metabase_dataset_response(["count"], [[1]]),
+                json=_metabase_dataset_response(['count'], [[1]]),
             )
         )
 
@@ -158,7 +158,7 @@ async def test_question_too_long_is_truncated_not_errored(
         result = await run_query(long_question)
 
     # Assert — no sanitization error; question arrived at _nl_to_sql truncated
-    assert "error" not in result
+    assert 'error' not in result
     assert len(captured) == 1
     assert len(captured[0]) <= 500
 
@@ -171,35 +171,37 @@ async def test_question_too_long_is_truncated_not_errored(
 @pytest.mark.asyncio
 async def test_drop_table_sql_from_llm_returns_error(monkeypatch: pytest.MonkeyPatch):
     """LLM returns DROP TABLE — is_safe_sql rejects it."""
+
     # Arrange
     async def _bad_nl_to_sql(question: str, schema: str) -> str:
-        return "DROP TABLE users"
+        return 'DROP TABLE users'
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _bad_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _bad_nl_to_sql)
 
     # Act
-    result = await run_query("delete all users")
+    result = await run_query('delete all users')
 
     # Assert
-    assert "error" in result
-    assert "Generated SQL rejected" in result["error"]
+    assert 'error' in result
+    assert 'Generated SQL rejected' in result['error']
 
 
 @pytest.mark.asyncio
 async def test_insert_sql_from_llm_returns_error(monkeypatch: pytest.MonkeyPatch):
     """LLM returns INSERT — is_safe_sql rejects it."""
+
     # Arrange
     async def _bad_nl_to_sql(question: str, schema: str) -> str:
         return "INSERT INTO users (name) VALUES ('hacked')"
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _bad_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _bad_nl_to_sql)
 
     # Act
-    result = await run_query("add a user")
+    result = await run_query('add a user')
 
     # Assert
-    assert "error" in result
-    assert "Generated SQL rejected" in result["error"]
+    assert 'error' in result
+    assert 'Generated SQL rejected' in result['error']
 
 
 # ---------------------------------------------------------------------------
@@ -211,33 +213,31 @@ async def test_insert_sql_from_llm_returns_error(monkeypatch: pytest.MonkeyPatch
 async def test_successful_query_returns_cols_and_rows(monkeypatch: pytest.MonkeyPatch):
     # Arrange
     async def _good_nl_to_sql(question: str, schema: str) -> str:
-        return "SELECT id, name FROM users"
+        return 'SELECT id, name FROM users'
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _good_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _good_nl_to_sql)
 
     with respx.mock() as mock:
-        mock.post(_METABASE_SESSION_URL).mock(
-            return_value=httpx.Response(200, json={"id": "fake-token"})
-        )
+        mock.post(_METABASE_SESSION_URL).mock(return_value=httpx.Response(200, json={'id': 'fake-token'}))
         mock.post(_METABASE_DATASET_URL).mock(
             return_value=httpx.Response(
                 200,
                 json=_metabase_dataset_response(
-                    ["id", "name"],
-                    [[1, "Alice"], [2, "Bob"]],
+                    ['id', 'name'],
+                    [[1, 'Alice'], [2, 'Bob']],
                 ),
             )
         )
 
         # Act
-        result = await run_query("show me all users")
+        result = await run_query('show me all users')
 
     # Assert
-    assert "error" not in result
-    assert result["cols"] == ["id", "name"]
-    assert result["rows"] == [
-        {"id": 1, "name": "Alice"},
-        {"id": 2, "name": "Bob"},
+    assert 'error' not in result
+    assert result['cols'] == ['id', 'name']
+    assert result['rows'] == [
+        {'id': 1, 'name': 'Alice'},
+        {'id': 2, 'name': 'Bob'},
     ]
 
 
@@ -245,28 +245,26 @@ async def test_successful_query_returns_cols_and_rows(monkeypatch: pytest.Monkey
 async def test_successful_query_empty_result_set(monkeypatch: pytest.MonkeyPatch):
     # Arrange
     async def _good_nl_to_sql(question: str, schema: str) -> str:
-        return "SELECT id FROM users WHERE id = 99999"
+        return 'SELECT id FROM users WHERE id = 99999'
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _good_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _good_nl_to_sql)
 
     with respx.mock() as mock:
-        mock.post(_METABASE_SESSION_URL).mock(
-            return_value=httpx.Response(200, json={"id": "fake-token"})
-        )
+        mock.post(_METABASE_SESSION_URL).mock(return_value=httpx.Response(200, json={'id': 'fake-token'}))
         mock.post(_METABASE_DATASET_URL).mock(
             return_value=httpx.Response(
                 200,
-                json=_metabase_dataset_response(["id"], []),
+                json=_metabase_dataset_response(['id'], []),
             )
         )
 
         # Act
-        result = await run_query("find user 99999")
+        result = await run_query('find user 99999')
 
     # Assert
-    assert "error" not in result
-    assert result["cols"] == ["id"]
-    assert result["rows"] == []
+    assert 'error' not in result
+    assert result['cols'] == ['id']
+    assert result['rows'] == []
 
 
 # ---------------------------------------------------------------------------
@@ -280,15 +278,15 @@ async def test_exception_in_nl_to_sql_returns_generic_error(
 ):
     # Arrange
     async def _exploding_nl_to_sql(question: str, schema: str) -> str:
-        raise RuntimeError("LLM service crashed")
+        raise RuntimeError('LLM service crashed')
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _exploding_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _exploding_nl_to_sql)
 
     # Act
-    result = await run_query("how many orders today")
+    result = await run_query('how many orders today')
 
     # Assert
-    assert result == {"error": "An internal error occurred. Please try again."}
+    assert result == {'error': 'An internal error occurred. Please try again.'}
 
 
 @pytest.mark.asyncio
@@ -297,20 +295,16 @@ async def test_metabase_http_500_returns_generic_error(
 ):
     # Arrange
     async def _good_nl_to_sql(question: str, schema: str) -> str:
-        return "SELECT COUNT(*) FROM orders"
+        return 'SELECT COUNT(*) FROM orders'
 
-    monkeypatch.setattr(executor_module, "_nl_to_sql", _good_nl_to_sql)
+    monkeypatch.setattr(executor_module, '_nl_to_sql', _good_nl_to_sql)
 
     with respx.mock() as mock:
-        mock.post(_METABASE_SESSION_URL).mock(
-            return_value=httpx.Response(200, json={"id": "fake-token"})
-        )
-        mock.post(_METABASE_DATASET_URL).mock(
-            return_value=httpx.Response(500)
-        )
+        mock.post(_METABASE_SESSION_URL).mock(return_value=httpx.Response(200, json={'id': 'fake-token'}))
+        mock.post(_METABASE_DATASET_URL).mock(return_value=httpx.Response(500))
 
         # Act
-        result = await run_query("count all orders")
+        result = await run_query('count all orders')
 
     # Assert
-    assert result == {"error": "An internal error occurred. Please try again."}
+    assert result == {'error': 'An internal error occurred. Please try again.'}

@@ -7,7 +7,4 @@ router = APIRouter()
 
 @router.get('/status')
 async def connector_status() -> list[dict]:
-    return [
-        {'name': c.platform_name, 'registered': True}
-        for c in registry.all_connectors()
-    ]
+    return [{'name': c.platform_name, 'registered': True} for c in registry.all_connectors()]

@@ -8,12 +8,12 @@ Ask questions in plain English inside a Teams channel — OpenFlow translates th
 
 ## What's Added
 
-| Feature | Description |
-|---|---|
-| **Teams connector** | Receives messages from a Microsoft Teams bot, routes them through the pipeline, and replies in the same conversation |
-| **NL-to-SQL tool** | Converts a natural-language question into a read-only SQL query using a local LLM (Ollama), executes it via Metabase, and returns structured results |
-| **Admin UI** | Bot integrations panel inside Open WebUI Settings to view connector status |
-| **Security hardening** | Input sanitization, SQL allowlist (SELECT-only via sqlglot), prompt-injection isolation, startup config validation |
+| Feature                | Description                                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Teams connector**    | Receives messages from a Microsoft Teams bot, routes them through the pipeline, and replies in the same conversation                                 |
+| **NL-to-SQL tool**     | Converts a natural-language question into a read-only SQL query using a local LLM (Ollama), executes it via Metabase, and returns structured results |
+| **Admin UI**           | Bot integrations panel inside Open WebUI Settings to view connector status                                                                           |
+| **Security hardening** | Input sanitization, SQL allowlist (SELECT-only via sqlglot), prompt-injection isolation, startup config validation                                   |
 
 Everything from the upstream Open WebUI — RAG, image generation, voice, model management — is preserved and unchanged.
 
@@ -96,11 +96,11 @@ docker compose up -d
 
 This starts three services:
 
-| Service | URL | Purpose |
-|---|---|---|
+| Service      | URL                   | Purpose                   |
+| ------------ | --------------------- | ------------------------- |
 | `open-webui` | http://localhost:8080 | Open WebUI + OpenFlow API |
-| `ollama` | internal | LLM inference |
-| `metabase` | http://localhost:3001 | Database query proxy |
+| `ollama`     | internal              | LLM inference             |
+| `metabase`   | http://localhost:3001 | Database query proxy      |
 
 ### 4. Register the Teams Webhook
 
@@ -126,26 +126,26 @@ Should return `{"status": "ok", "connectors": ["teams"]}`.
 
 ### Required (OpenFlow)
 
-| Variable | Description |
-|---|---|
-| `TEAMS_APP_ID` | Azure Bot application (client) ID |
-| `TEAMS_APP_SECRET` | Azure Bot client secret |
-| `METABASE_USERNAME` | Metabase admin username |
-| `METABASE_PASSWORD` | Metabase admin password |
+| Variable            | Description                       |
+| ------------------- | --------------------------------- |
+| `TEAMS_APP_ID`      | Azure Bot application (client) ID |
+| `TEAMS_APP_SECRET`  | Azure Bot client secret           |
+| `METABASE_USERNAME` | Metabase admin username           |
+| `METABASE_PASSWORD` | Metabase admin password           |
 
 ### Optional (OpenFlow)
 
-| Variable | Default | Description |
-|---|---|---|
-| `TEAMS_TENANT_ID` | _(empty)_ | Restrict bot to a single tenant |
-| `METABASE_URL` | `http://metabase:3000` | Internal Metabase URL |
-| `METABASE_DATABASE_ID` | `1` | Metabase database ID to query |
-| `LLM_BASE_URL` | `http://ollama:11434/v1` | OpenAI-compatible LLM endpoint |
-| `LLM_MODEL` | `llama3.2` | Model name for NL-to-SQL |
-| `LLM_API_KEY` | _(empty)_ | API key if using a hosted LLM |
-| `SCHEMA_CACHE_MINUTES` | `60` | How long to cache the Metabase schema |
-| `OPEN_WEBUI_PORT` | `8080` | Host port for the web UI |
-| `METABASE_PORT` | `3001` | Host port for Metabase |
+| Variable               | Default                  | Description                           |
+| ---------------------- | ------------------------ | ------------------------------------- |
+| `TEAMS_TENANT_ID`      | _(empty)_                | Restrict bot to a single tenant       |
+| `METABASE_URL`         | `http://metabase:3000`   | Internal Metabase URL                 |
+| `METABASE_DATABASE_ID` | `1`                      | Metabase database ID to query         |
+| `LLM_BASE_URL`         | `http://ollama:11434/v1` | OpenAI-compatible LLM endpoint        |
+| `LLM_MODEL`            | `llama3.2`               | Model name for NL-to-SQL              |
+| `LLM_API_KEY`          | _(empty)_                | API key if using a hosted LLM         |
+| `SCHEMA_CACHE_MINUTES` | `60`                     | How long to cache the Metabase schema |
+| `OPEN_WEBUI_PORT`      | `8080`                   | Host port for the web UI              |
+| `METABASE_PORT`        | `3001`                   | Host port for Metabase                |
 
 All standard Open WebUI environment variables are also supported unchanged.
 

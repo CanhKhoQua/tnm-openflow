@@ -16,8 +16,13 @@ def is_safe_sql(sql: str) -> tuple[bool, str]:
         return False, f'Only SELECT statements are allowed, got: {type(stmt).__name__}'
 
     _DISALLOWED = (
-        exp.Insert, exp.Update, exp.Delete, exp.Drop,
-        exp.Create, exp.Command, exp.Anonymous,
+        exp.Insert,
+        exp.Update,
+        exp.Delete,
+        exp.Drop,
+        exp.Create,
+        exp.Command,
+        exp.Anonymous,
     )
     for node in stmt.walk():
         if isinstance(node, _DISALLOWED):

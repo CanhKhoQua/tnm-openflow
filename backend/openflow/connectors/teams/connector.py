@@ -28,4 +28,6 @@ class TeamsConnector(BasePlatformConnector):
         return await self._adapter.process_activity(activity, auth_header, _turn)
 
     async def send_message(self, conversation_id: str, text: str, **kwargs: Any) -> None:
-        raise NotImplementedError('Proactive messaging requires a conversation reference — use pipeline.reply() instead.')
+        raise NotImplementedError(
+            'Proactive messaging requires a conversation reference — use pipeline.reply() instead.'
+        )
